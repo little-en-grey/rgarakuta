@@ -3,13 +3,13 @@
 		<meta charset="UTF-8" />
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-		<title>testttt</title>
+		<title>スプラトゥーン3 ブキルーレット</title>
 	</head>
 	<body>
 		<div id="app">
 			<select v-model="countNum">
 				<option v-for="n in maxCount" :value="n">{{ n }}</option>
-			</select>
+			</select>人
 			<button @click="getWeapon(countNum)"> 名前を入れずに取得 </button>
 			<select v-model="selectCategory">
 				<option v-for="(category, idx) in categories" :value="idx">{{ category }}</option>
@@ -17,8 +17,8 @@
 			<ol>
 				<li v-for="n in maxCount" :key="n">
 					<input type="text" v-model="userNames[n-1]" />
-					<template v-if="resultText[n-1]">
-						さんのzzzは{{ resultText[n-1] }}です
+					<template v-if="resultWrapons[n-1]">
+						:{{ resultWrapons[n-1] }}
 					</template>
 				</li>
 			</ol>
@@ -31,52 +31,19 @@
 			data() {
 				return {
 					maxCount: 8,
-					weapons: [
-						{
-							name: "appleAAA",
-							category: 1,
-							sub: 1,
-						},
-						{
-							name: "appleBBB",
-							category: 1,
-							sub: 2,
-						},
-						{
-							name: "bananaCCC",
-							category: 2,
-							sub: 3,
-						},
-						{
-							name: "lemonDDD",
-							category: 3,
-							sub: 4,
-						},
-					],
-					categories: [
-						"未選択",
-						"シューター",
-						"ローラー",
-						"チャージャー",
-						"スロッシャー",
-						"スピナー",
-						"マニューバー",
-						"シェルター",
-						"ブラスター",
-						"フデ",
-						"ストリンガー",
-						"ワイパー",
-					],
+					weapons: null,
+					categories: null,
 					selectCategory: 0,
 					mainWeapon: "main",
 					textData:"",
 					countNum:1,
-					resultText: [],
+					resultWrapons: [],
 					userNames: [],
 				}
 			},
 			mounted: function () {
 				axios.get("./weapons.json").then(response => (this.weapons = response.data));
+				axios.get("./categories.json").then(response => (this.categories = response.data));
 			},
 			methods: {
 				resultData() {
@@ -87,7 +54,7 @@
 					}
 				},
 				getWeapon(count) {
-					this.resultText = [];
+					this.resultWrapons = [];
 					var selectItems = [];
 					if(this.selectCategory) {
 						selectItems = this.weapons.filter(function(item, index){ 
@@ -101,7 +68,7 @@
 
 					for(var i = 0; i < count; i++){
 						var randnum = Math.floor( Math.random() * selectItems.length );
-						this.resultText.push(selectItems[randnum].name);
+						this.resultWrapons.push(selectItems[randnum].name);
 					}
 				},
 				getWeaponForUserName() {
