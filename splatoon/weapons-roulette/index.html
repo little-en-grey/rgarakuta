@@ -76,7 +76,7 @@
 				}
 			},
 			mounted: function () {
-				axios.get("./weapons.json").then(response => (this.weapons = response));
+				axios.get("./weapons.json").then(response => (this.weapons = response.data));
 			},
 			methods: {
 				resultData() {
