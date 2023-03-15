@@ -1,0 +1,117 @@
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<title>testttt</title>
+	</head>
+	<body>
+		<div id="app">
+			<select v-model="countNum">
+				<option v-for="n in maxCount" :value="n">{{ n }}</option>
+			</select>
+			<button @click="getWeapon(countNum)"> 名前を入れずに取得 </button>
+			<select v-model="selectCategory">
+				<option v-for="(category, idx) in categories" :value="idx">{{ category }}</option>
+			</select>
+			<ol>
+				<li v-for="n in maxCount" :key="n">
+					<input type="text" v-model="userNames[n-1]" />
+					<template v-if="resultText[n-1]">
+						さんのzzzは{{ resultText[n-1] }}です
+					</template>
+				</li>
+			</ol>
+			<button @click="getWeaponForUserName()"> get </button>
+		</div>
+	</body>
+	<script>
+		new Vue({
+			el: '#app',
+			data() {
+				return {
+					maxCount: 8,
+					weapons: [
+						{
+							name: "appleAAA",
+							category: 1,
+							sub: 1,
+						},
+						{
+							name: "appleBBB",
+							category: 1,
+							sub: 2,
+						},
+						{
+							name: "bananaCCC",
+							category: 2,
+							sub: 3,
+						},
+						{
+							name: "lemonDDD",
+							category: 3,
+							sub: 4,
+						},
+					],
+					categories: [
+						"未選択",
+						"シューター",
+						"ローラー",
+						"チャージャー",
+						"スロッシャー",
+						"スピナー",
+						"マニューバー",
+						"シェルター",
+						"ブラスター",
+						"フデ",
+						"ストリンガー",
+						"ワイパー",
+					],
+					selectCategory: 0,
+					mainWeapon: "main",
+					textData:"",
+					countNum:1,
+					resultText: [],
+					userNames: [],
+				}
+			},
+			mounted: function () {
+				axios.get("./weapons.json").then(response => (this.weapons = response));
+			},
+			methods: {
+				resultData() {
+					var num;
+					if(this.textData.match(new RegExp('^' + this.mainWeapon + ' [0-9]{1,2}$', 'g'))) {
+						num = this.textData.replace(/[^0-9]/g, '');
+						this.getWeapon(num);
+					}
+				},
+				getWeapon(count) {
+					this.resultText = [];
+					var selectItems = [];
+					if(this.selectCategory) {
+						selectItems = this.weapons.filter(function(item, index){ 
+							if(item.category == this) return true;
+						}, this.selectCategory);
+					} else {
+						selectItems = this.weapons;
+					}
+					
+					console.log(selectItems)
+
+					for(var i = 0; i < count; i++){
+						var randnum = Math.floor( Math.random() * selectItems.length );
+						this.resultText.push(selectItems[randnum].name);
+					}
+				},
+				getWeaponForUserName() {
+					this.userNames = this.userNames.filter(function(v1, i1, a1){
+						if (v1 !== '') return true
+						return a1.findIndex(v => v1 === v) === i1
+					})
+					this.getWeapon(this.userNames.length)
+				}
+			}
+		});
+	</script>
+</html>
